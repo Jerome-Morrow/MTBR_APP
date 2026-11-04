@@ -53,7 +53,8 @@
 
     <div class="header-block">
         <div class="header-left">
-            ИСПОЛНИТЕЛЬ: Общество с ограниченной ответственностью "МТБР" ИНН 7730117815, КПП 774850001,<br>
+            ИСПОЛНИТЕЛЬ: 
+            Общество с ограниченной ответственностью "МТБР" ИНН 7730117815, КПП 774850001,<br>
             Код по ОКПО 51173707 ,  125171, Москва г, вн.тер.г. муниципальный округ Войковский,<br>
             ш.&nbsp;Ленинградское, д.&nbsp;16А, стр.&nbsp;3, тел.: +7&nbsp;495&nbsp;122-00-88
         </div>
@@ -185,29 +186,35 @@
         </tfoot>
     </table>
     {% endif %}
+    
+    <div style="page-break-inside: avoid; break-inside: avoid;">
 
-    <table style="max-width: 450px; border-collapse: collapse; font-size: 11px; margin-top: 15px; margin-left: auto;">
-        <tbody>
-            <tr style="font-weight: bold;">
-                <td style="border: 1px solid #000; padding: 4px 6px; width: 40%;" rowspan="2">Итого по заказ-наряду:</td>
-                <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">Руб. без НДС</td>
-                <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">НДС</td>
-                <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">Руб. с НДС</td>
-            </tr>
-            <tr style="font-weight: bold;">
-                <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">{{ '{:,.2f}'.format(totals.total_sum or 0).replace(',', ' ').replace('.', ',') }}</td>
-                <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">22%</td>
-                <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">{{ '{:,.2f}'.format(totals_vat.total_sum_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <table style="max-width: 450px; border-collapse: collapse; font-size: 11px; margin-top: 15px; margin-left: auto;">
+            <tbody>
+                <tr style="font-weight: bold;">
+                    <td style="border: 1px solid #000; padding: 4px 6px; width: 40%;" rowspan="2">Итого по заказ-наряду:</td>
+                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">Руб. без НДС</td>
+                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">НДС</td>
+                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">Руб. с НДС</td>
+                </tr>
+                <tr style="font-weight: bold;">
+                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">{{ '{:,.2f}'.format(totals.total_sum or 0).replace(',', ' ').replace('.', ',') }}</td>
+                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">22%</td>
+                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">{{ '{:,.2f}'.format(totals_vat.total_sum_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <div style="margin-top: 15px; font-size: 12px; line-height: 1.4;">
-        <div>Стоимость работ, запасных частей и расходных материалов по настоящему заказ-наряду составляет (руб.):</div>
-        <div style="font-weight: bold; margin-top: 4px;">
-            {{ totals_vat.total_vat_words|capitalize }} в т.ч. НДС {{ '{:,.2f}'.format(totals_vat.vat or 0).replace(',', ' ').replace('.', ',') }} Руб
+        <div style="margin-top: 15px; font-size: 12px; line-height: 1.4;">
+            <div>Стоимость работ, запасных частей и расходных материалов по настоящему заказ-наряду составляет (руб.):</div>
+            <div style="font-weight: bold; margin-top: 4px;">
+                {{ totals_vat.total_vat_words|capitalize }} в т.ч. НДС {{ '{:,.2f}'.format(totals_vat.vat or 0).replace(',', ' ').replace('.', ',') }} Руб
+            </div>
         </div>
+
     </div>
+
+
 
 
     <table style="width: 100%; margin-top: 20px; border-collapse: collapse; font-size: 12px;">
