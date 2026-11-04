@@ -119,9 +119,9 @@ def load_orders(excel_file) -> list:
 
 
 def run():
-    st.subheader("🧾 Заказ-наряды: Excel → PDF → ZIP")
+    st.subheader("🧾🧾🧾 Заказ-наряды: 📊Excel → 📄PDF → 📦ZIP")
 
-    uploaded_file = st.file_uploader("Загрузите Excel-файл с заказ-нарядами", type=["xlsx", "xls"])
+    uploaded_file = st.file_uploader("Загрузите Excel-файл с отчетом 1С", type=["xlsx", "xls"])
     if not uploaded_file:
         st.info("Выберите файл .xlsx/.xls для обработки.")
         return

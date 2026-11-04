@@ -67,7 +67,7 @@ with col3:
         st.rerun()
 
 with col4:
-    if st.button("🧾 Заказ-наряды в PDF", key="btn_order_pdf", use_container_width=True):
+    if st.button("🧾 Генерация заказ нарядов WB", key="btn_order_pdf", use_container_width=True):
         st.session_state["app"] = "order_pdf"
         st.rerun()        
 
