@@ -53,9 +53,8 @@ with col_txt:
 
 
 
-
-# 4 колонки: [отступ, кнопка 1, кнопка 2, отступ]
-col1, col2, col3, col4 = st.columns([1, 3, 3, 1])
+# 5 колонок: [отступ, кнопка 1, кнопка 2, кнопка 3, отступ]
+col1, col2, col3, col4, col5 = st.columns([1, 3, 3, 3, 1])
 
 with col2:
     if st.button("🔢 Калькулятор доставки", key="btn_calc", use_container_width=True):
@@ -67,8 +66,13 @@ with col3:
         st.session_state["app"] = "inventory_check"
         st.rerun()
 
+with col4:
+    if st.button("🧾 Заказ-наряды в PDF", key="btn_order_pdf", use_container_width=True):
+        st.session_state["app"] = "order_pdf"
+        st.rerun()        
 
 current_app = st.session_state.get("app")
+
 
 if current_app == "calc_delivery":
     from apps.delivery_calc import run
@@ -76,5 +80,8 @@ if current_app == "calc_delivery":
 elif current_app == "inventory_check":
     from apps.making_selta_orders import run
     run()
+elif current_app == "order_pdf":
+    from apps.order_pdf_generator import run
+    run()
 else:
-    st.info("Нажмите на кнопку, чтобы запустить приложение.")   
+    st.info("Нажмите на кнопку, чтобы запустить приложение.")
