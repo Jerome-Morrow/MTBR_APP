@@ -199,7 +199,7 @@
                     <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">в т.ч. НДС</td>
                 </tr>
                 <tr style="font-weight: bold;">
-                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">{{ '{:,.2f}'.format(totals.total_sum_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">{{ '{:,.2f}'.format(totals_vat.total_sum_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
                     <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">22%</td>
                     <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">{{ '{:,.2f}'.format(totals_vat.vat or 0).replace(',', ' ').replace('.', ',') }}</td>
                 </tr>
