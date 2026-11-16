@@ -111,7 +111,7 @@
                 <th style="width: 7%;">Норма</th>
                 <th style="width: 12%;">ИТОГО</th>
                 <th style="width: 6%;">НДС</th>
-                <th style="width: 11%;">ИТОГО с НДС</th>
+                <th style="width: 11%;">в т.ч. НДС</th>
             </tr>
             <tr class="nums">
                 <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
@@ -127,18 +127,18 @@
                 <td class="c">{{ row.qty if row.qty is not none else '—' }}</td>
                 <td class="c">{{ '{:,.2f}'.format(row.price_per_hour or 0).replace(',', ' ').replace('.', ',') }}</td>
                 <td class="c">{{ row.hours }}</td>
-                <td class="c">{{ '{:,.2f}'.format(row.sum or 0).replace(',', ' ').replace('.', ',') }}</td>
-                <td class="c">22%</td>
                 <td class="c">{{ '{:,.2f}'.format(row.sum_with_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="c">22%</td>
+                <td class="c">{{ '{:,.2f}'.format(row.vat_per_line or 0).replace(',', ' ').replace('.', ',') }}</td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="6" style="border: 1px solid #000; padding: 4px; text-align: right;">Итого работ:</td>
-                <td class="c">{{ '{:,.2f}'.format(totals.sum_works or 0).replace(',', ' ').replace('.', ',') }}</td>
-                <td class="c">22%</td>
                 <td class="c">{{ '{:,.2f}'.format(totals_vat.sum_works_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="c">  </td>
+                <td class="c">{{ '{:,.2f}'.format(totals_vat.vat_works or 0).replace(',', ' ').replace('.', ',') }}</td>
             </tr>
         </tfoot>
     </table>
@@ -156,7 +156,7 @@
                 <th style="width: 11%;">Цена</th>
                 <th style="width: 11%;">ИТОГО</th>
                 <th style="width: 5%;">НДС</th>
-                <th style="width: 11%;">ИТОГО с НДС</th>
+                <th style="width: 11%;">в т.ч. НДС</th>
             </tr>
             <tr class="nums">
                 <th>1</th><th>2</th><th>3</th><th>4</th>
@@ -171,18 +171,18 @@
                 <td class="c">{{ row.description }}</td>
                 <td class="c">{{ row.qty if row.qty is not none else '—' }}</td>
                 <td class="c">{{ '{:,.2f}'.format(row.price_per_unit or 0).replace(',', ' ').replace('.', ',') }}</td>
-                <td class="c">{{ '{:,.2f}'.format(row.sum or 0).replace(',', ' ').replace('.', ',') }}</td>
-                <td class="c">22%</td>
                 <td class="c">{{ '{:,.2f}'.format(row.sum_with_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="c">22%</td>
+                <td class="c">{{ '{:,.2f}'.format(row.vat_per_line or 0).replace(',', ' ').replace('.', ',') }}</td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="5" style="border: 1px solid #000; padding: 4px; text-align: right;">Итого материалов:</td>
-                <td class="c">{{ '{:,.2f}'.format(totals.sum_parts or 0).replace(',', ' ').replace('.', ',') }}</td>
-                <td class="c">22%</td>
                 <td class="c">{{ '{:,.2f}'.format(totals_vat.sum_parts_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="c">  </td>
+                <td class="c">{{ '{:,.2f}'.format(totals_vat.vat_parts or 0).replace(',', ' ').replace('.', ',') }}</td>
             </tr>
         </tfoot>
     </table>
@@ -194,14 +194,14 @@
             <tbody>
                 <tr style="font-weight: bold;">
                     <td style="border: 1px solid #000; padding: 4px 6px; width: 40%;" rowspan="2">Итого по заказ-наряду:</td>
-                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">Руб. без НДС</td>
+                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">Руб.</td>
                     <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">НДС</td>
-                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">Руб. с НДС</td>
+                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">в т.ч. НДС</td>
                 </tr>
                 <tr style="font-weight: bold;">
                     <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">{{ '{:,.2f}'.format(totals.total_sum or 0).replace(',', ' ').replace('.', ',') }}</td>
                     <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">22%</td>
-                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">{{ '{:,.2f}'.format(totals_vat.total_sum_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center;">{{ '{:,.2f}'.format(totals_vat.vat or 0).replace(',', ' ').replace('.', ',') }}</td>
                 </tr>
             </tbody>
         </table>

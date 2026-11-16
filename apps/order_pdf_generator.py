@@ -60,17 +60,21 @@ def load_orders(excel_file) -> list:
         # Работы
         works_df = group[cat_norm == 'работы'].copy()
         if not works_df.empty and (works_df['hours'] > 0).any():
-            works_df['price_per_hour'] = round((works_df['sum'] / works_df['hours']), 2)
+            works_df['price_per_hour'] = round((works_df['sum_with_vat'] / works_df['hours']), 2)
+            works_df['vat_per_line']=round(( works_df['sum_with_vat'] - (works_df['sum_with_vat'] / 1.22) ), 2)
         else:
             works_df['price_per_hour'] = 0.0
+            works_df['vat_per_line']=0.0
 
         # Материалы/запчасти
         parts_df = group[~(cat_norm == 'работы')].copy()
         if not parts_df.empty and (parts_df['qty'] > 0).any():
-            parts_df['price_per_unit'] = round((parts_df['sum'] / parts_df['qty']), 2)
+            parts_df['price_per_unit'] = round((parts_df['sum_with_vat'] / parts_df['qty']), 2)
+            parts_df['vat_per_line']=round(( parts_df['sum_with_vat'] - (parts_df['sum_with_vat'] / 1.22) ), 2)
         else:
             parts_df['price_per_unit'] = 0.0
-
+            parts_df['vat_per_line']=0.0
+            
         # Конвертация в список словарей — обязательно для Jinja
         works = works_df.to_dict('records') if not works_df.empty else []
         parts = parts_df.to_dict('records') if not parts_df.empty else []
@@ -100,6 +104,7 @@ def load_orders(excel_file) -> list:
             },
             'works': works,
             'parts': parts,
+            
             'totals': {
                 'sum_works': sum_works,
                 'sum_parts': sum_parts,
@@ -107,7 +112,9 @@ def load_orders(excel_file) -> list:
             },
             'totals_vat': {
                 'sum_works_vat': sum_works_vat,
+                'vat_works':round((sum_works_vat - (sum_works_vat / 1.22)), 2),
                 'sum_parts_vat': sum_parts_vat,
+                'vat_parts':round((sum_parts_vat - (sum_parts_vat / 1.22)), 2),
                 'total_sum_vat': total_sum_vat,
                 'total_vat_words': numeral.rubles(total_sum_vat),
                 'vat': round((total_sum_vat - (total_sum_vat / 1.22)), 2),
