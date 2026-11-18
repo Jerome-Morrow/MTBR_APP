@@ -36,7 +36,7 @@
         .grid th { border: 1px solid #000; padding: 4px; text-align: center; }
         .grid td {
             border: 1px solid #000; padding: 4px;
-            word-wrap: break-word; overflow-wrap: break-word;
+            word-wrap: normal; overflow-wrap: normal;
         }
         .grid thead { display: table-header-group; }   /* шапка повторяется на каждой странице */
         .grid tr { page-break-inside: avoid; }          /* строки не рвутся пополам */
@@ -44,6 +44,7 @@
         .grid thead tr.nums th { font-weight: normal; color: #555; }
         .grid td.c { text-align: center; }
         .grid td.l { text-align: left; }
+        .grid td.r { text-align: Right; }
         .grid tfoot tr td { font-weight: bold; }
     </style>
 </head>
@@ -123,22 +124,22 @@
             <tr>
                 <td class="c">{{ loop.index }}</td>
                 <td class="l">{{ row.part_number or '' }}</td>
-                <td class="c">{{ row.description }}</td>
-                <td class="c">{{ row.qty if row.qty is not none else '—' }}</td>
-                <td class="c">{{ '{:,.2f}'.format(row.price_per_hour or 0).replace(',', ' ').replace('.', ',') }}</td>
-                <td class="c">{{ row.hours }}</td>
-                <td class="c">{{ '{:,.2f}'.format(row.sum_with_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
-                <td class="c">22%</td>
-                <td class="c">{{ '{:,.2f}'.format(row.vat_per_line or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="l">{{ row.description }}</td>
+                <td class="r">{{ row.qty if row.qty is not none else '—' }}</td>
+                <td class="r">{{ '{:,.2f}'.format(row.price_per_hour or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="r">{{ row.hours }}</td>
+                <td class="r">{{ '{:,.2f}'.format(row.sum_with_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="r">22%</td>
+                <td class="r">{{ '{:,.2f}'.format(row.vat_per_line or 0).replace(',', ' ').replace('.', ',') }}</td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="6" style="border: 1px solid #000; padding: 4px; text-align: right;">Итого работ:</td>
-                <td class="c">{{ '{:,.2f}'.format(totals_vat.sum_works_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="r">{{ '{:,.2f}'.format(totals_vat.sum_works_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
                 <td class="c">  </td>
-                <td class="c">{{ '{:,.2f}'.format(totals_vat.vat_works or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="r">{{ '{:,.2f}'.format(totals_vat.vat_works or 0).replace(',', ' ').replace('.', ',') }}</td>
             </tr>
         </tfoot>
     </table>
@@ -168,21 +169,21 @@
             <tr>
                 <td class="c">{{ loop.index }}</td>
                 <td class="l">{{ row.part_number or '' }}</td>
-                <td class="c">{{ row.description }}</td>
-                <td class="c">{{ row.qty if row.qty is not none else '—' }}</td>
-                <td class="c">{{ '{:,.2f}'.format(row.price_per_unit or 0).replace(',', ' ').replace('.', ',') }}</td>
-                <td class="c">{{ '{:,.2f}'.format(row.sum_with_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
-                <td class="c">22%</td>
-                <td class="c">{{ '{:,.2f}'.format(row.vat_per_line or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="l">{{ row.description }}</td>
+                <td class="r">{{ row.qty if row.qty is not none else '—' }}</td>
+                <td class="r">{{ '{:,.2f}'.format(row.price_per_unit or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="r">{{ '{:,.2f}'.format(row.sum_with_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="r">22%</td>
+                <td class="r">{{ '{:,.2f}'.format(row.vat_per_line or 0).replace(',', ' ').replace('.', ',') }}</td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="5" style="border: 1px solid #000; padding: 4px; text-align: right;">Итого материалов:</td>
-                <td class="c">{{ '{:,.2f}'.format(totals_vat.sum_parts_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="r">{{ '{:,.2f}'.format(totals_vat.sum_parts_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
                 <td class="c">  </td>
-                <td class="c">{{ '{:,.2f}'.format(totals_vat.vat_parts or 0).replace(',', ' ').replace('.', ',') }}</td>
+                <td class="r">{{ '{:,.2f}'.format(totals_vat.vat_parts or 0).replace(',', ' ').replace('.', ',') }}</td>
             </tr>
         </tfoot>
     </table>
