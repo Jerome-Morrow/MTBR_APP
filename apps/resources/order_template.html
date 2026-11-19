@@ -39,11 +39,12 @@
             overflow-wrap: break-word;
         }
         .grid thead { display: table-header-group; }   /* шапка повторяется на каждой странице */
+        .grid tfoot { display: table-row-group; }      /* итог ОДИН раз, в конце таблицы */
         .grid tr { page-break-inside: avoid; }          /* строки не рвутся пополам */
         .grid thead tr.head th { background-color: #f5f5f5; }
         .grid thead tr.nums th { font-weight: normal; color: #555; }
         .grid td.c { text-align: center; }
-        .grid td.l { text-align: left; overflow-wrap: break-word; hyphens: auto; }
+        .grid td.l { text-align: left; }
         .grid td.r { text-align: Right; }
         .grid tfoot tr td { font-weight: bold; }
     </style>
