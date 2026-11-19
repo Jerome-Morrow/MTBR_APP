@@ -37,9 +37,8 @@
         .grid td {
 
             border: 1px solid #000; padding: 4px;
-            overflow-wrap: anywhere;  
-            hyphens: auto; 
-            hyphenate-limit-chars: 6 3 2 ;
+            word-wrap: break-word;          /* как в info-table */
+            overflow-wrap: break-word;      /* как в info-table */
         }
         
         .grid thead { display: table-header-group; }   /* шапка повторяется на каждой странице */
@@ -48,12 +47,7 @@
         .grid thead tr.head th { background-color: #f5f5f5; }
         .grid thead tr.nums th { font-weight: normal; color: #555; }
         .grid td.c { text-align: center; }
-
-        
-        .grid td.l {text-align: left;
-                      hyphens: auto;
-                      hyphenate-limit-chars: 10 6 4;
-                    } 
+        .grid td.l {text-align: left;} 
         .grid td.r { text-align: right; }
         .grid tfoot tr td { font-weight: bold; }
         
