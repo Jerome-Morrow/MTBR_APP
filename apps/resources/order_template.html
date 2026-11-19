@@ -35,9 +35,12 @@
         .grid { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 10px; }
         .grid th { border: 1px solid #000; padding: 4px; text-align: center; }
         .grid td {
+
             border: 1px solid #000; padding: 4px;
-            overflow-wrap: normal;
+            overflow-wrap: anywhere;  
+            hyphens: auto; hyphenate-limit-chars: 10 4 3;
         }
+        
         .grid thead { display: table-header-group; }   /* шапка повторяется на каждой странице */
         .grid tfoot { display: table-row-group; }      /* итог ОДИН раз, в конце таблицы */
         .grid tr { page-break-inside: avoid; }          /* строки не рвутся пополам */
@@ -45,15 +48,9 @@
         .grid thead tr.nums th { font-weight: normal; color: #555; }
         .grid td.c { text-align: center; }
 
-        /* Наименования: слова целые, а сверхдлинные — по слогам с дефисом */
-        .grid td.l {
-            text-align: left;
-            hyphens: auto;
-            hyphenate-limit-chars: 10 4 3;   /* рвать только слова от 10 симв., мин. 4 до и 3 после дефиса */
-        }
+        
+        .grid td.l {text-align: left;}
  
-        /* Артикулы: там нет "слов", можно рвать где угодно */
-        .grid td.art { overflow-wrap: anywhere; }
 
     
         .grid td.r { text-align: right; }
