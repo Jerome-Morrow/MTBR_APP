@@ -44,9 +44,21 @@
         .grid thead tr.head th { background-color: #f5f5f5; }
         .grid thead tr.nums th { font-weight: normal; color: #555; }
         .grid td.c { text-align: center; }
-        .grid td.l { text-align: left; }
+
+        /* Наименования: слова целые, а сверхдлинные — по слогам с дефисом */
+        .grid td.l {
+            text-align: left;
+            hyphens: auto;
+            hyphenate-limit-chars: 10 4 3;   /* рвать только слова от 10 симв., мин. 4 до и 3 после дефиса */
+        }
+ 
+        /* Артикулы: там нет "слов", можно рвать где угодно */
+        .grid td.art { overflow-wrap: anywhere; }
+
+    
         .grid td.r { text-align: right; }
         .grid tfoot tr td { font-weight: bold; }
+        
     </style>
 </head>
 <body>
@@ -124,7 +136,7 @@
             {% for row in works %}
             <tr>
                 <td class="c">{{ loop.index }}</td>
-                <td class="l">{{ row.part_number or '' }}</td>
+                <td class="l art">{{ row.part_number or '' }}</td>
                 <td class="l">{{ row.description }}</td>
                 <td class="r">{{ row.qty if row.qty is not none else '—' }}</td>
                 <td class="r">{{ '{:,.2f}'.format(row.price_per_hour or 0).replace(',', ' ').replace('.', ',') }}</td>
@@ -169,7 +181,7 @@
             {% for row in parts %}
             <tr>
                 <td class="c">{{ loop.index }}</td>
-                <td class="l">{{ row.part_number or '' }}</td>
+                <td class="l art">{{ row.part_number or '' }}</td>
                 <td class="l">{{ row.description }}</td>
                 <td class="r">{{ row.qty if row.qty is not none else '—' }}</td>
                 <td class="r">{{ '{:,.2f}'.format(row.price_per_unit or 0).replace(',', ' ').replace('.', ',') }}</td>
