@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="utf-8">
     <style>
@@ -36,14 +36,14 @@
         .grid th { border: 1px solid #000; padding: 4px; text-align: center; }
         .grid td {
             border: 1px solid #000; padding: 4px;
-            word-wrap: normal; overflow-wrap: normal;
+            overflow-wrap: break-word;
         }
         .grid thead { display: table-header-group; }   /* шапка повторяется на каждой странице */
         .grid tr { page-break-inside: avoid; }          /* строки не рвутся пополам */
         .grid thead tr.head th { background-color: #f5f5f5; }
         .grid thead tr.nums th { font-weight: normal; color: #555; }
         .grid td.c { text-align: center; }
-        .grid td.l { text-align: left; }
+        .grid td.l { text-align: left; overflow-wrap: break-word; hyphens: auto; }
         .grid td.r { text-align: Right; }
         .grid tfoot tr td { font-weight: bold; }
     </style>
