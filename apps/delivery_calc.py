@@ -361,10 +361,16 @@ def run():
             # calc_warehouses пополняется, пересчёт идёт по всем.
 
             # --- ШАГ 8: ИТОГОВОЕ СРАВНЕНИЕ ВСЕХ СКЛАДОВ ---
-            # <-- ИЗМЕНЕНИЕ (шаг 4): сравнение строится из свежих таблиц,
-            # у каждого склада одинаковый набор точек, а если тарифа
-            # из склада в какую-то точку нет в базе — прочерк «—» вместо None.
             calculated_dfs = {wh: df for wh, df in st.session_state.calc_results.items() if df is not None}
+
+            # <-- НОВОЕ: определяем, где встречаются доп. расходы
+            def has_extra(flag_value):
+                return str(flag_value).startswith("Да")
+
+            extra_in_any = any(
+                df_wh["Доп. расходы"].apply(has_extra).any()
+                for df_wh in calculated_dfs.values()
+            )
 
             if len(calculated_dfs) >= 2:
                 st.divider()
@@ -378,6 +384,7 @@ def run():
                 for point in all_points:
                     row_data = {"Точка доставки": point}
                     prices = []
+                    extra_flags = []
 
                     for wh in warehouses:
                         df_wh = calculated_dfs[wh]
@@ -389,7 +396,15 @@ def run():
                             continue
 
                         best = df_point.loc[df_point["Стоимость (руб)"].idxmin()]
-                        row_data[f"{wh} — лучший экспедитор"] = best["Экспедитор"]
+                        # <-- НОВОЕ: пометка ⚠️ у экспедитора, если у лучшего варианта есть доп. расходы
+                        fwd_label = best["Экспедитор"]
+                        if has_extra(best["Доп. расходы"]):
+                            fwd_label = f"{fwd_label} ⚠️"
+                            extra_flags.append(True)
+                        else:
+                            extra_flags.append(False)
+
+                        row_data[f"{wh} — лучший экспедитор"] = fwd_label
                         row_data[f"{wh} — цена (руб)"] = round(best["Стоимость (руб)"], 2)
                         prices.append(best["Стоимость (руб)"])
 
@@ -402,6 +417,8 @@ def run():
                     else:
                         continue
 
+                    # <-- НОВОЕ: примечание по точке
+                    row_data["Примечание"] = "⚠️ Есть доп. расходы" if any(extra_flags) else ""
                     comparison_rows.append(row_data)
 
                 df_comparison = pd.DataFrame(comparison_rows)
@@ -410,18 +427,19 @@ def run():
 
                 # Итог: суммарная стоимость по всем точкам для каждого склада
                 st.subheader("💰 Итог: суммарная стоимость по всем точкам")
-                totals = {}
+                totals = []
                 for wh, df_wh in calculated_dfs.items():
                     best_total = df_wh.loc[
                         df_wh.groupby("Точка доставки")["Стоимость (руб)"].idxmin()
-                    ]["Стоимость (руб)"].sum()
-                    totals[wh] = round(best_total, 2)
+                    ]
+                    totals.append({
+                        "Склад отправления": wh,
+                        "Итоговая стоимость (руб)": round(best_total["Стоимость (руб)"].sum(), 2),
+                        # <-- НОВОЕ: пометка, если по этому складу хотя бы у одной точки есть доп. расходы
+                        "Примечание": "⚠️ Есть доп. расходы" if best_total["Доп. расходы"].apply(has_extra).any() else "",
+                    })
 
-                df_totals = pd.DataFrame([
-                    {"Склад отправления": wh, "Итоговая стоимость (руб)": total}
-                    for wh, total in totals.items()
-                ]).sort_values("Итоговая стоимость (руб)")
-
+                df_totals = pd.DataFrame(totals).sort_values("Итоговая стоимость (руб)")
                 st.dataframe(df_totals, use_container_width=True)
 
                 cheapest_total = df_totals.iloc[0]
@@ -429,4 +447,10 @@ def run():
                     f"✅ Выгоднее отправлять из «{cheapest_total['Склад отправления']}» — "
                     f"итого {cheapest_total['Итоговая стоимость (руб)']} руб."
                 )
-                
+
+                # <-- НОВОЕ: общее примечание в самом конце
+                if extra_in_any:
+                    st.warning(
+                        "⚠️ Не забудьте учесть дополнительные расходы: "
+                        "16000 руб. без НДС за 1 рейс (см. пометки ⚠️ в таблицах выше)."
+                    )
