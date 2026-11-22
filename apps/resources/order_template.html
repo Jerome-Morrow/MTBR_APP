@@ -132,7 +132,7 @@
                 <td class="c">{{ loop.index }}</td>
                 <td class="l art">{{ row.part_number or '' }}</td>
                 <td class="l">{{ row.description }}</td>
-                <td class="r">{{ row.qty if row.qty is not none else '—' }}</td>
+                <td class="r">{{ '{:,.0f}'.format(row.qty or 0).replace(',', ' ').replace('.', ',') if row.qty is not none else '—' }}</td>
                 <td class="r">{{ '{:,.2f}'.format(row.price_per_hour or 0).replace(',', ' ').replace('.', ',') }}</td>
                 <td class="r">{{ '{:,.2f}'.format(row.hours or 0).replace(',', ' ').replace('.', ',') }}</td>
                 <td class="r">{{ '{:,.2f}'.format(row.sum_with_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
@@ -177,7 +177,7 @@
                 <td class="c">{{ loop.index }}</td>
                 <td class="l art">{{ row.part_number or '' }}</td>
                 <td class="l">{{ row.description }}</td>
-                <td class="r">{{ row.qty if row.qty is not none else '—' }}</td>
+                <td class="r">{{ '{:,.0f}'.format(row.qty or 0).replace(',', ' ').replace('.', ',') if row.qty is not none else '—' }}</td>
                 <td class="r">{{ '{:,.2f}'.format(row.price_per_unit or 0).replace(',', ' ').replace('.', ',') }}</td>
                 <td class="r">{{ '{:,.2f}'.format(row.sum_with_vat or 0).replace(',', ' ').replace('.', ',') }}</td>
                 <td class="r">22%</td>
