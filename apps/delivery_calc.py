@@ -43,6 +43,7 @@ def run():
             # или None, если тарифов не нашлось.
             def calculate_from(start_point, cargo_data, selected_forwarders, client_name):
                 results = []
+                
                 for point in cargo_data.keys():
                     cargo = cargo_data[point]
                     weight = cargo["weight"]
@@ -101,12 +102,12 @@ def run():
                             "Экспедитор": forwarder,
                             "Фактический вес (кг)": weight,
                             "Объём (м³)": volume,
-                            "Платный вес (кг)":          round  (chargeable_weight, 2),
-                            "Тариф за кг (руб c НДС )":  round ( price_per_kilo * 1.22 ,2),
-                            "Мин. цена (руб с НДС )":    round   (min_delivery_price * 1.22, 2),
+                            "Платный вес (кг)": round(chargeable_weight, 2),
+                            "Тариф за кг (руб c НДС)": round (price_per_kilo * 1.22, 2),
+                            "Мин. цена (руб с НДС)": round (min_delivery_price * 1.22 ,2), 
                             "Тип цены": price_type,
                             "Доп. расходы": extra_flag,
-                            "Стоимость (руб с Ндс)": round (cost * 1.22 , 2) # НДС
+                            "Стоимость (руб с НДС)": round(cost * 1.22, 2) # НДС
                         })
 
                 return pd.DataFrame(results) if results else None
@@ -391,11 +392,11 @@ def run():
 
                         st.markdown(f"**Лучшие варианты по точкам (из {wh}):**")
                         best_rows = df_wh.loc[
-                            df_wh.groupby("Точка доставки")["Стоимость (руб)"].idxmin()
+                            df_wh.groupby("Точка доставки")["Стоимость (руб с НДС)"].idxmin()
                         ]
                         st.dataframe(best_rows[[
                             "Склад отправления", "Точка доставки", "Экспедитор",
-                            "Платный вес (кг)", "Тип цены", "Доп. расходы", "Стоимость (руб)"
+                            "Платный вес (кг)", "Тип цены", "Доп. расходы", "Стоимость (руб с НДС)"
                         ]], use_container_width=True)
 
             # --- ШАГ 7 (бывший): ОТДЕЛЬНЫЙ БЛОК «ВТОРОЙ СКЛАД» УДАЛЁН.
@@ -438,7 +439,7 @@ def run():
                             row_data[f"{wh} — цена (руб)"] = "—"
                             continue
 
-                        best = df_point.loc[df_point["Стоимость (руб)"].idxmin()]
+                        best = df_point.loc[df_point["Стоимость (руб с НДС)"].idxmin()]
                         # <-- НОВОЕ: пометка ⚠️ у экспедитора, если у лучшего варианта есть доп. расходы
                         fwd_label = best["Экспедитор"]
                         if has_extra(best["Доп. расходы"]):
@@ -448,8 +449,8 @@ def run():
                             extra_flags.append(False)
 
                         row_data[f"{wh} — лучший экспедитор"] = fwd_label
-                        row_data[f"{wh} — цена (руб)"] = round(best["Стоимость (руб)"], 2)
-                        prices.append(best["Стоимость (руб)"])
+                        row_data[f"{wh} — цена (руб)"] = round(best["Стоимость (руб с НДС)"], 2)
+                        prices.append(best["Стоимость (руб с НДС)"])
 
                     if len(prices) >= 2:
                         row_data["Разница (руб)"] = round(max(prices) - min(prices), 2)
@@ -473,22 +474,22 @@ def run():
                 totals = []
                 for wh, df_wh in calculated_dfs.items():
                     best_total = df_wh.loc[
-                        df_wh.groupby("Точка доставки")["Стоимость (руб)"].idxmin()
+                        df_wh.groupby("Точка доставки")["Стоимость (руб с НДС)"].idxmin()
                     ]
                     totals.append({
                         "Склад отправления": wh,
-                        "Итоговая стоимость (руб)": round(best_total["Стоимость (руб)"].sum(), 2),
+                        "Итоговая стоимость (руб)": round(best_total["Стоимость (руб с НДС)"].sum(), 2),
                         # <-- НОВОЕ: пометка, если по этому складу хотя бы у одной точки есть доп. расходы
                         "Примечание": "⚠️ Есть доп. расходы" if best_total["Доп. расходы"].apply(has_extra).any() else "",
                     })
 
-                df_totals = pd.DataFrame(totals).sort_values("Итоговая стоимость (руб)")
+                df_totals = pd.DataFrame(totals).sort_values("Итоговая стоимость (руб с НДС)")
                 st.dataframe(df_totals, use_container_width=True)
 
                 cheapest_total = df_totals.iloc[0]
                 st.success(
                     f"✅ Выгоднее отправлять из «{cheapest_total['Склад отправления']}» — "
-                    f"итого {cheapest_total['Итоговая стоимость (руб)']} руб."
+                    f"итого {cheapest_total['Итоговая стоимость (руб с НДС)']} руб."
                 )
 
                 # <-- НОВОЕ: общее примечание в самом конце
