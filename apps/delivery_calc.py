@@ -103,10 +103,10 @@ def run():
                             "Объём (м³)": volume,
                             "Платный вес (кг)":          round  (chargeable_weight, 2),
                             "Тариф за кг (руб c НДС )":  round ( price_per_kilo * 1.22 ,2),
-                            "Мин. цена (руб с НДС )":    round   (min_delivery_price * 1.22, 2)
+                            "Мин. цена (руб с НДС )":    round   (min_delivery_price * 1.22, 2),
                             "Тип цены": price_type,
                             "Доп. расходы": extra_flag,
-                            "Стоимость (руб с Ндс)": round (cost * 1.22, 2) # НДС
+                            "Стоимость (руб с Ндс)": round (cost * 1.22 , 2) # НДС
                         })
 
                 return pd.DataFrame(results) if results else None
