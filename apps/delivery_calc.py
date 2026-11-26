@@ -174,7 +174,8 @@ def run():
                     except Exception as e:
                         st.error(f"Ошибка чтения Excel: {e}")
 
-            # --- ШАГ 3: ЛОГИКА РУЧНОГО ВВОДА ---
+
+                        # --- ШАГ 3: ЛОГИКА РУЧНОГО ВВОДА ---
             if not excel_loaded:
                 if input_mode == "Загрузить из Excel" and not uploaded_file:
                     st.info("Загрузите файл Excel или переключитесь на ручной ввод.")
@@ -218,70 +219,112 @@ def run():
 
                         st.success(f"Выбрано точек: {len(selected_points)}")
 
-                        st.subheader("3. Укажите вес и объём для каждой точки")
+                        # <-- ИЗМЕНЕНИЕ: хранилище грузовых мест.
+                        # places — словарь: точка -> список мест.
+                        # Каждое место: вес (кг) и габариты в см (длина, ширина, высота).
+                        # id нужен для стабильных ключей виджетов, чтобы при
+                        # удалении/добавлении мест не подтягивались старые значения.
+                        if "place_seq" not in st.session_state:
+                            st.session_state.place_seq = 0
+                        if "places" not in st.session_state:
+                            st.session_state.places = {}
+
+                        def new_place():
+                            st.session_state.place_seq += 1
+                            return {
+                                "id": st.session_state.place_seq,
+                                "weight": 50.0,   # кг
+                                "l": 50.0,        # см
+                                "w": 40.0,        # см
+                                "h": 30.0,        # см
+                            }
+
+                        # Каждой выбранной точке — по одному месту по умолчанию.
+                        # Точки, снятые с выбора, чистим из хранилища.
                         for point in selected_points:
-                            col1, col2 = st.columns(2)
-                            with col1:
-                                weight = st.number_input(
-                                    f"Вес для «{point}»", min_value=0.0, value=50.0, step=0.1, format="%.1f",
-                                    key=f"w_{point}"
+                            if point not in st.session_state.places:
+                                st.session_state.places[point] = [new_place()]
+                        for p in list(st.session_state.places.keys()):
+                            if p not in selected_points:
+                                del st.session_state.places[p]
+
+                        st.subheader("3. Грузовые места по каждой точке")
+                        st.caption("Габариты вводятся в сантиметрах, объём считается автоматически.")
+
+                        for point in selected_points:
+                            st.markdown(f"**Точка: «{point}»**")
+                            places = st.session_state.places[point]
+
+                            total_weight = 0.0
+                            total_volume = 0.0
+
+                            for i, pl in enumerate(places):
+                                cid = pl["id"]
+                                col_w, col_l, col_wd, col_h, col_del = st.columns([2, 2, 2, 2, 1])
+                                with col_w:
+                                    pw = st.number_input(
+                                        f"Вес (кг), место {i + 1}", min_value=0.0, step=0.1,
+                                        format="%.1f", key=f"pl{cid}_w"
+                                    )
+                                with col_l:
+                                    pl_len = st.number_input(
+                                        f"Длина (см), место {i + 1}", min_value=0.0, step=1.0,
+                                        format="%.1f", key=f"pl{cid}_l"
+                                    )
+                                with col_wd:
+                                    pwid = st.number_input(
+                                        f"Ширина (см), место {i + 1}", min_value=0.0, step=1.0,
+                                        format="%.1f", key=f"pl{cid}_wd"
+                                    )
+                                with col_h:
+                                    ph = st.number_input(
+                                        f"Высота (см), место {i + 1}", min_value=0.0, step=1.0,
+                                        format="%.1f", key=f"pl{cid}_h"
+                                    )
+                                with col_del:
+                                    st.write("")  # выравнивание кнопки по строке
+                                    if len(places) > 1 and st.button("✖", key=f"pl{cid}_del",
+                                                                     help="Удалить это место"):
+                                        places.remove(pl)
+                                        st.rerun()
+
+                                # сохраняем значения в хранилище и считаем объём места:
+                                # см³ делим на 1 000 000, получаем м³
+                                pl.update({"weight": pw, "l": pl_len, "w": pwid, "h": ph})
+                                place_volume = (pl_len * pwid * ph) / 1_000_000.0
+
+                                total_weight += pw
+                                total_volume += place_volume
+
+                                st.caption(
+                                    f"Место {i + 1}: объём {place_volume:.3f} м³"
                                 )
-                            with col2:
-                                volume = st.number_input(
-                                    f"Объём для «{point}»", min_value=0.0, value=0.5, step=0.01, format="%.2f",
-                                    key=f"v_{point}"
-                                )
-                            cargo_data[point] = {'weight': weight, 'volume': volume, 'client': client_name}
+
+                            if st.button("➕ Добавить место", key=f"add_{point}"):
+                                places.append(new_place())
+                                st.rerun()
+
+                            st.info(
+                                f"Итого по точке «{point}»: "
+                                f"{total_weight:.1f} кг, {total_volume:.3f} м³ "
+                                f"(мест: {len(places)})"
+                            )
+
+                            # <-- дальше по коду всё как раньше: в cargo_data
+                            # кладём УЖЕ посчитанные суммарные вес и объём
+                            cargo_data[point] = {
+                                "weight": total_weight,
+                                "volume": total_volume,
+                                "client": client_name,
+                                "places": len(places),
+                            }
 
                     except Exception as e:
                         st.error(f"Ошибка на этапе ручного ввода: {e}")
                         st.stop()
 
-            # Проверка: есть ли вообще данные для расчёта
-            if not cargo_data:
-                st.warning("Нет данных о грузе. Невозможно выполнить расчёт.")
-                st.stop()
 
-            # --- БЛОК: ПРОВЕРКА И СВОДКА ТОЧЕК ДОСТАВКИ ---
-            st.write("---")
-            st.subheader("📋 Параметры груза (Сводка и проверка)")
 
-            df_all_points = load_data_safe("SELECT DISTINCT customer_delivery_point FROM customers_points;")
-            valid_points_set = set(df_all_points["customer_delivery_point"].tolist())
-
-            accepted_points = []
-            rejected_points = []
-
-            for point, data in cargo_data.items():
-                weight = data["weight"]
-                volume = data["volume"]
-
-                if point in valid_points_set:
-                    accepted_points.append(point)
-                else:
-                    rejected_points.append((point, weight, volume, "Точка не найдена в базе"))
-
-            if accepted_points:
-                st.success(f"✅ Принято для расчёта: {len(accepted_points)} точек.")
-                for p in accepted_points:
-                    data = cargo_data[p]
-                    st.write(f"  • {p}: {data['weight']} кг, {data['volume']} м³")
-            else:
-                st.warning("⚠️ Нет ни одной валидной точки доставки для расчёта!")
-
-            if rejected_points:
-                st.error(f"❌ Обнаружены ошибки: {len(rejected_points)} точек не найдены в базе.")
-
-                for point, w, v, reason in rejected_points:
-                    st.markdown(
-                        f"  • <span style='color: red; font-weight: bold;'>{point}</span>: "
-                        f"{w} кг, {v} м³ — {reason}",
-                        unsafe_allow_html=True
-                    )
-                    del cargo_data[point]
-
-            if not cargo_data:
-                st.stop()
 
             # --- ШАГ 4: ВЫБОР ЭКСПЕДИТОРОВ ---
             df_forwarders = load_data("SELECT forwarder_id, forwarder_name FROM forwarders ORDER BY forwarder_name")
@@ -305,7 +348,7 @@ def run():
                 st.session_state.calc_results = {}
 
             # --- ШАГ 5: ВЫБОР СКЛАДА ОТПРАВЛЕНИЯ ---
-            df_starts = load_data("SELECT startpoint_name FROM start_points ORDER BY startpoint_name")
+            df_starts = load_data("SELECT startpoint_name FROM start_points ORDER BY startpoint_code")
             if df_starts.empty:
                 st.warning("В базе нет складов отправления.")
                 st.stop()
