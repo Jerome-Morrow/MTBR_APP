@@ -436,7 +436,7 @@ def run():
 
                         if df_point.empty:
                             row_data[f"{wh} — лучший экспедитор"] = "—"
-                            row_data[f"{wh} — цена (руб)"] = "—"
+                            row_data[f"{wh} — цена (руб с НДС)"] = "—"
                             continue
 
                         best = df_point.loc[df_point["Стоимость (руб с НДС)"].idxmin()]
@@ -449,7 +449,7 @@ def run():
                             extra_flags.append(False)
 
                         row_data[f"{wh} — лучший экспедитор"] = fwd_label
-                        row_data[f"{wh} — цена (руб)"] = round(best["Стоимость (руб с НДС)"], 2)
+                        row_data[f"{wh} — цена (руб с НДС)"] = round(best["Стоимость (руб с НДС)"], 2)
                         prices.append(best["Стоимость (руб с НДС)"])
 
                     if len(prices) >= 2:
