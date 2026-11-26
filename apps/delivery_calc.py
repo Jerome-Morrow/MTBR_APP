@@ -101,12 +101,12 @@ def run():
                             "Экспедитор": forwarder,
                             "Фактический вес (кг)": weight,
                             "Объём (м³)": volume,
-                            "Платный вес (кг)": round(chargeable_weight, 2),
-                            "Тариф за кг (руб)": price_per_kilo,
-                            "Мин. цена (руб)": min_delivery_price,
+                            "Платный вес (кг)":          round  (chargeable_weight, 2),
+                            "Тариф за кг (руб c НДС )":  round ( price_per_kilo * 1.22 ,2),
+                            "Мин. цена (руб с НДС )":    round   (min_delivery_price * 1.22, 2)
                             "Тип цены": price_type,
                             "Доп. расходы": extra_flag,
-                            "Стоимость (руб)": round(cost, 2)
+                            "Стоимость (руб с Ндс)": round (cost * 1.22, 2) # НДС
                         })
 
                 return pd.DataFrame(results) if results else None
@@ -263,22 +263,22 @@ def run():
                                 col_w, col_l, col_wd, col_h, col_del = st.columns([2, 2, 2, 2, 1])
                                 with col_w:
                                     pw = st.number_input(
-                                        f"Вес (кг), место {i + 1}", min_value=0.0, step=0.1,
+                                        f"Вес (кг), место {i + 1}", min_value=1.0, step=0.1,
                                         format="%.1f", key=f"pl{cid}_w"
                                     )
                                 with col_l:
                                     pl_len = st.number_input(
-                                        f"Длина (см), место {i + 1}", min_value=0.0, step=1.0,
+                                        f"Длина (см), место {i + 1}", min_value=1.0, step=1.0,
                                         format="%.1f", key=f"pl{cid}_l"
                                     )
                                 with col_wd:
                                     pwid = st.number_input(
-                                        f"Ширина (см), место {i + 1}", min_value=0.0, step=1.0,
+                                        f"Ширина (см), место {i + 1}", min_value=1.0, step=1.0,
                                         format="%.1f", key=f"pl{cid}_wd"
                                     )
                                 with col_h:
                                     ph = st.number_input(
-                                        f"Высота (см), место {i + 1}", min_value=0.0, step=1.0,
+                                        f"Высота (см), место {i + 1}", min_value=1.0, step=1.0,
                                         format="%.1f", key=f"pl{cid}_h"
                                     )
                                 with col_del:
